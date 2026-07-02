@@ -18,6 +18,7 @@ export class Home implements OnInit, OnDestroy {
 
   busqueda: string = '';
   paisesFiltrados: Pais[] = [];
+  
 
   modalDatosVisible: boolean = false;
   modalClimaVisible: boolean = false;
@@ -59,8 +60,8 @@ export class Home implements OnInit, OnDestroy {
     this.paisesService.buscarPaises(query).subscribe({
       next: (data) => {
         this.paisesFiltrados = data.filter(p =>
-          p.nombre.toLowerCase().startsWith(query.toLowerCase())
-        );
+  p.nombre.toLowerCase().startsWith(query.toLowerCase())
+);
         this.cdr.detectChanges();
       },
       error: (err) => {
