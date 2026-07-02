@@ -1,1 +1,56 @@
-<p>home works!</p>
+<div class="home-container">
+
+  <div class="navbar">
+    <h1>🌍 Países del Mundo</h1>
+  </div>
+
+  <div class="buscador">
+    <input
+      type="text"
+      placeholder="Buscar país..."
+      [(ngModel)]="busqueda"
+      (input)="filtrarPaises()"
+    />
+  </div>
+
+  <div class="grid-paises">
+    <app-tarjeta
+      *ngFor="let pais of paisesFiltrados"
+      [pais]="pais"
+      (verDatos)="abrirModalDatos($event)"
+      (verClima)="abrirModalClima($event)"
+    />
+  </div>
+
+  <!-- Modal Datos -->
+  <div class="overlay" *ngIf="modalDatosVisible" (click)="cerrarModales()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="btn-cerrar" (click)="cerrarModales()">✕</button>
+      <img [src]="paisSeleccionado?.bandera" [alt]="paisSeleccionado?.nombre" class="modal-bandera" />
+      <h2>{{ paisSeleccionado?.nombre }}</h2>
+      <div class="modal-info">
+        <p><strong>🏛️ Capital:</strong> {{ paisSeleccionado?.capital }}</p>
+        <p><strong>👥 Población:</strong> {{ paisSeleccionado?.poblacion | number }}</p>
+        <p><strong>🌎 Región:</strong> {{ paisSeleccionado?.region }}</p>
+        <p><strong>📍 Coordenadas:</strong> {{ paisSeleccionado?.latitud }}, {{ paisSeleccionado?.longitud }}</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Clima -->
+  <div class="overlay" *ngIf="modalClimaVisible" (click)="cerrarModales()">
+    <div class="modal" (click)="$event.stopPropagation()">
+      <button class="btn-cerrar" (click)="cerrarModales()">✕</button>
+      <h2>🌤️ Clima en {{ paisSeleccionado?.nombre }}</h2>
+      <div class="modal-info" *ngIf="!cargandoClima">
+        <p class="clima-icon">{{ descripcionClima }}</p>
+        <p><strong>🌡️ Temperatura:</strong> {{ climaSeleccionado?.temperatura }}°C</p>
+        <p><strong>💧 Humedad:</strong> {{ climaSeleccionado?.humedad }}%</p>
+      </div>
+      <div *ngIf="cargandoClima">
+        <p>Cargando clima...</p>
+      </div>
+    </div>
+  </div>
+
+</div>

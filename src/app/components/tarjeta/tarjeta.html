@@ -1,1 +1,9 @@
-<p>tarjeta works!</p>
+<div class="tarjeta">
+  <img [src]="pais.bandera" [alt]="pais.nombre" class="bandera" />
+  <h3>{{ pais.nombre }}</h3>
+  <p>{{ pais.capital }}</p>
+  <div class="botones">
+    <button class="btn-datos" (click)="onVerDatos()">Ver Datos</button>
+    <button class="btn-clima" (click)="onVerClima()">Ver Clima</button>
+  </div>
+</div>
