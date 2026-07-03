@@ -17,8 +17,8 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 export class Home implements OnInit, OnDestroy {
 
   busqueda: string = '';
+  todosPaises: Pais[] = [];
   paisesFiltrados: Pais[] = [];
-  
 
   modalDatosVisible: boolean = false;
   modalClimaVisible: boolean = false;
@@ -26,6 +26,7 @@ export class Home implements OnInit, OnDestroy {
   climaSeleccionado: Clima | null = null;
   descripcionClima: string = '';
   cargandoClima: boolean = false;
+  cargando: boolean = false;
 
   private busquedaSubject = new Subject<string>();
 
@@ -36,15 +37,28 @@ export class Home implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.cargando = true;
+    this.paisesService.obtenerTodos().subscribe({
+      next: (data: Pais[]) => {
+        this.todosPaises = data;
+        this.cargando = false;
+        this.cdr.detectChanges();
+      },
+      error: (err: any) => {
+        console.log('ERROR:', err);
+        this.cargando = false;
+      }
+    });
+
     this.busquedaSubject.pipe(
-      debounceTime(500),
+      debounceTime(300),
       distinctUntilChanged()
-    ).subscribe(query => {
-      if (query.length < 2) {
+    ).subscribe((query: string) => {
+      if (query.length < 1) {
         this.paisesFiltrados = [];
         return;
       }
-      this.buscarPaises(query);
+      this.filtrarLocal(query);
     });
   }
 
@@ -56,18 +70,11 @@ export class Home implements OnInit, OnDestroy {
     this.busquedaSubject.next(this.busqueda);
   }
 
-  buscarPaises(query: string) {
-    this.paisesService.buscarPaises(query).subscribe({
-      next: (data) => {
-        this.paisesFiltrados = data.filter(p =>
-  p.nombre.toLowerCase().startsWith(query.toLowerCase())
-);
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.log('ERROR:', err);
-      }
-    });
+  filtrarLocal(query: string) {
+    this.paisesFiltrados = this.todosPaises.filter((p: Pais) =>
+      p.nombre.toLowerCase().startsWith(query.toLowerCase())
+    );
+    this.cdr.detectChanges();
   }
 
   abrirModalDatos(pais: Pais) {
@@ -83,13 +90,13 @@ export class Home implements OnInit, OnDestroy {
     this.cargandoClima = true;
 
     this.climaService.obtenerClima(pais.latitud, pais.longitud).subscribe({
-      next: (clima) => {
+      next: (clima: Clima) => {
         this.climaSeleccionado = clima;
         this.descripcionClima = this.climaService.obtenerDescripcionClima(clima.codigoClima);
         this.cargandoClima = false;
         this.cdr.detectChanges();
       },
-      error: (err) => {
+      error: (err: any) => {
         console.log('ERROR CLIMA:', err);
         this.cargandoClima = false;
         this.cdr.detectChanges();
