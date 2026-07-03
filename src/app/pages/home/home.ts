@@ -54,7 +54,7 @@ export class Home implements OnInit, OnDestroy {
       debounceTime(300),
       distinctUntilChanged()
     ).subscribe((query: string) => {
-      if (query.length < 1) {
+      if (!query.trim()) {
         this.paisesFiltrados = [];
         return;
       }
@@ -67,12 +67,16 @@ export class Home implements OnInit, OnDestroy {
   }
 
   filtrarPaises() {
+    if (!this.busqueda.trim()) {
+      this.paisesFiltrados = [];
+      return;
+    }
     this.busquedaSubject.next(this.busqueda);
   }
 
   filtrarLocal(query: string) {
     this.paisesFiltrados = this.todosPaises.filter((p: Pais) =>
-      p.nombre.toLowerCase().startsWith(query.toLowerCase())
+      p.bandera && p.bandera.trim() && p.nombre.toLowerCase().startsWith(query.toLowerCase())
     );
     this.cdr.detectChanges();
   }

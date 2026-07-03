@@ -10,7 +10,7 @@ import { Pais } from '../../interfaces/pais';
 export class PaisesService {
 
   private apiUrl = 'https://api.restcountries.com/countries/v5';
-  private apiKey = 'rc_live_709b3a7f2f354a15914342db683fdc3b';
+  private apiKey = 'rc_live_946b0bae59dd43349ce093633e9bdd92';
 
   constructor(private http: HttpClient) {}
 
